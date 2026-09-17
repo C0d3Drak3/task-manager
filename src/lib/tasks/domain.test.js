@@ -57,8 +57,8 @@ describe("task hierarchy", () => {
 
   it("rejects a cyclic flat hierarchy", () => {
     expect(() => buildTaskTree([
-      task("a", "b"),
-      task("b", "a"),
+      task("a", "b", { effort: 1 }),
+      task("b", "a", { effort: 1 }),
     ])).toThrow("Task hierarchy contains a cycle");
   });
 

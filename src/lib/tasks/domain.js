@@ -94,6 +94,7 @@ export function buildTaskTree(tasks) {
 
   const roots = [...nodes.values()].filter((node) => node.parentId === null || node.parentId === undefined);
   const visiting = new Set();
+  const calculated = new Set();
 
   function calculate(node) {
     if (visiting.has(node.id)) {
@@ -104,18 +105,17 @@ export function buildTaskTree(tasks) {
     node.aggregateEffort = effortValue(node.effort)
       + node.children.reduce((total, child) => total + calculate(child), 0);
     visiting.delete(node.id);
+    calculated.add(node.id);
     return node.aggregateEffort;
   }
 
   roots.sort(compareTasks);
-  for (const node of nodes.values()) {
-    if (!node.parentId) {
-      calculate(node);
-    }
+  for (const root of roots) {
+    calculate(root);
   }
 
   for (const node of nodes.values()) {
-    if (!node.aggregateEffort && effortValue(node.effort) === 0 && node.children.length > 0) {
+    if (!calculated.has(node.id)) {
       calculate(node);
     }
   }
