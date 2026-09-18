@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ErrorMessage } from "./task-ui";
 
 const emptyValues = { title: "", description: "", status: "TODO", priority: "MEDIUM", effort: "" };
@@ -37,17 +37,6 @@ export default function TaskForm({ task, parentId = null, onSaved, onCancel, sub
   } : { ...emptyValues, parentId });
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
-
-  useEffect(() => {
-    setValues(task ? {
-      title: task.title,
-      description: task.description ?? "",
-      status: task.status,
-      priority: task.priority,
-      effort: task.effort ?? "",
-      parentId: task.parentId ?? "",
-    } : { ...emptyValues, parentId });
-  }, [task, parentId]);
 
   function change(event) {
     setValues((current) => ({ ...current, [event.target.name]: event.target.value }));

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import TaskForm from "./task-form";
 import TaskTree from "./task-tree";
 import { ErrorMessage, formatDate, formatEffort, PriorityBadge, StatusBadge, LoadingState } from "./task-ui";
@@ -14,6 +15,7 @@ async function fetchTask(id) {
 }
 
 export default function TaskDetailClient({ taskId }) {
+  const router = useRouter();
   const [task, setTask] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
@@ -33,7 +35,20 @@ export default function TaskDetailClient({ taskId }) {
     }
   }
 
-  useEffect(() => { loadTask(); }, [taskId]);
+  useEffect(() => {
+    const request = async () => {
+      setLoading(true);
+      setError("");
+      try {
+        setTask(await fetchTask(taskId));
+      } catch (requestError) {
+        setError(requestError.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    void request();
+  }, [taskId]);
 
   async function deleteCurrentTask() {
     if (!window.confirm("Delete this task and all of its subtasks? This cannot be undone.")) return;
@@ -43,7 +58,7 @@ export default function TaskDetailClient({ taskId }) {
       const response = await fetch(`/api/tasks/${taskId}`, { method: "DELETE" });
       const payload = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(payload.error?.message ?? "Unable to delete this task");
-      window.location.assign("/");
+      router.push("/");
     } catch (requestError) {
       setError(requestError.message);
       setDeleting(false);
@@ -97,7 +112,7 @@ export default function TaskDetailClient({ taskId }) {
             </div>
             <button type="button" onClick={() => setEditing((current) => !current)} className="button-secondary">{editing ? "Close" : "Edit"}</button>
           </div>
-          {editing && <div className="mt-5"><TaskForm task={task} onCancel={() => setEditing(false)} onSaved={(saved) => { setTask(saved); setEditing(false); }} /></div>}
+          {editing && <div className="mt-5"><TaskForm key={`${task.id}-${task.updatedAt ?? "current"}`} task={task} onCancel={() => setEditing(false)} onSaved={(saved) => { setTask(saved); setEditing(false); }} /></div>}
           {!editing && <dl className="mt-5 space-y-4 text-sm">
             <div><dt className="text-slate-500">Status</dt><dd className="mt-1"><StatusBadge status={task.status} /></dd></div>
             <div><dt className="text-slate-500">Priority</dt><dd className="mt-1"><PriorityBadge priority={task.priority} /></dd></div>

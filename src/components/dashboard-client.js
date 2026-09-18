@@ -40,7 +40,23 @@ export default function DashboardClient() {
     }
   }
 
-  useEffect(() => { loadTasks(); }, []);
+  useEffect(() => {
+    const request = async () => {
+      setLoading(true);
+      setError("");
+      try {
+        const response = await fetch("/api/tasks", { cache: "no-store" });
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(payload.error?.message ?? "Unable to load tasks");
+        setData(payload);
+      } catch (requestError) {
+        setError(requestError.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    void request();
+  }, []);
 
   const filteredTasks = useMemo(() => filterTree(data?.tasks ?? [], status, priority), [data, status, priority]);
 
