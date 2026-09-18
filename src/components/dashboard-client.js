@@ -75,7 +75,7 @@ export default function DashboardClient() {
       </header>
 
       {showCreate && (
-        <section className="panel max-w-2xl">
+        <section className="panel max-w-2xl p-5 sm:p-6">
           <h2 className="section-title">Create a task</h2>
           <p className="section-copy">Start with a top-level task. You can add subtasks from its detail page.</p>
           <div className="mt-5"><TaskForm onSaved={() => { setShowCreate(false); loadTasks(); }} /></div>
