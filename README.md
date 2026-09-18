@@ -2,6 +2,8 @@
 
 Taskboard is a small task-management application for a development team. It organizes work into recursively nested subtasks, tracks lifecycle and priority, and shows estimated workload across the complete hierarchy.
 
+![Taskboard dashboard](docs/taskboard-dashboard.png)
+
 ## Stack
 
 - Next.js 16 App Router and React

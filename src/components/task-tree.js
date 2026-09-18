@@ -4,7 +4,7 @@ import { formatEffort, PriorityBadge, StatusBadge } from "./task-ui";
 function TaskNode({ task, depth = 0 }) {
   return (
     <li>
-      <div className="group flex flex-col gap-3 border-b border-slate-100 px-4 py-4 last:border-b-0 sm:flex-row sm:items-center sm:justify-between" style={{ marginLeft: `${Math.min(depth, 5) * 1.25}rem` }}>
+      <div className={`group flex flex-col gap-3 border-b border-slate-100 px-4 py-4 last:border-b-0 sm:flex-row sm:items-center sm:justify-between${depth > 0 ? " relative before:absolute before:inset-y-0 before:left-0 before:w-0.5 before:bg-slate-400 after:absolute after:left-0 after:top-7 after:h-0.5 after:w-4 after:bg-slate-400" : ""}`} style={{ marginLeft: `${Math.min(depth, 5) * 1.25}rem` }}>
         <div className="min-w-0">
           <Link href={`/tasks/${task.id}`} className="font-semibold text-slate-950 underline-offset-4 hover:text-sky-700 hover:underline">
             {task.title}
@@ -20,7 +20,7 @@ function TaskNode({ task, depth = 0 }) {
         </div>
       </div>
       {task.children?.length > 0 && (
-        <ul className="border-l-2 border-slate-100">
+        <ul>
           {task.children.map((child) => <TaskNode key={child.id} task={child} depth={depth + 1} />)}
         </ul>
       )}
