@@ -92,7 +92,8 @@ function treeForTask(tasks, taskId) {
   const task = findTask(tasks, taskId);
   if (!task) throw new TaskNotFoundError(taskId);
   const descendants = findSubtree(tasks, taskId);
-  const tree = buildTaskTree([task, ...descendants]);
+  const tree = buildTaskTree([{ ...task, parentId: null }, ...descendants]);
+  tree[0].parentId = task.parentId;
   return tree[0];
 }
 
